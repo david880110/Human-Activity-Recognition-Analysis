@@ -2,7 +2,7 @@
 
 # Human-Activity-Recognition-Analysis
 
-![alt text](https://raw.githubusercontent.com/david880110/Airbnb-Data-Analytics/master/image/airbnb-logo.jpg)
+![alt text](https://raw.githubusercontent.com/david880110/Human-Activity-Recognition-Analysis/master/image/under-armour-connected-fitness-666x333.jpg)
 
 <p align="center">
   • <a href="#findings">Findings</a>
@@ -14,7 +14,7 @@ Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible t
 
 ## Data Source
 
-<img src="https://raw.githubusercontent.com/david880110/Airbnb-Data-Analytics/master/image/insideairbnb.png" width="150" height="40"/>
+<img src="https://raw.githubusercontent.com/david880110/Human-Activity-Recognition-Analysis/master/image/wayback-machine-logo.jpg" width="150" height="40"/>
 The [data](http://web.archive.org/web/20161224072740/http:/groupware.les.inf.puc-rio.br/har.) If you use the document you create for this class for any purpose please cite them as they have been very generous in allowing their data to be used for this kind of assignment.
 
 ## Findings 
