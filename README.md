@@ -37,3 +37,5 @@ The [data](http://web.archive.org/web/20161224072740/http:/groupware.les.inf.puc
 ## Technology Used
 
 <img src="https://raw.githubusercontent.com/david880110/tech-logo/master/R_logo.svg.png" width="180" height="90"/>
+
+© David Gu 2018 All Rights reserved.
