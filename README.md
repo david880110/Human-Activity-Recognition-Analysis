@@ -17,7 +17,7 @@ Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible t
 <img src="https://raw.githubusercontent.com/david880110/Human-Activity-Recognition-Analysis/master/image/wayback-machine-logo.jpg" width="240" height="80"/>
 The[data](http://web.archive.org/web/20161224072740/http:/groupware.les.inf.puc-rio.br/har.) for this project come from "http://web.archive.org" If you use the document you create for this class for any purpose please cite them as they have been very generous in allowing their data to be used for this kind of assignment.
 
-[I'm an inline-style link](https://www.google.com)
+[data](http://web.archive.org/web/20161224072740/http:/groupware.les.inf.puc-rio.br/har.)
 
 ## Findings 
 
