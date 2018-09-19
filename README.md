@@ -21,7 +21,7 @@ The [data](http://web.archive.org/web/20161224072740/http:/groupware.les.inf.puc
 
 ## Project Detail
 
-### How the model was built your
+### How the model was built
 
 
 ### How cross validation is used
