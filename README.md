@@ -1,4 +1,4 @@
-![built with R](https://img.shields.io/badge/built%20with-Python3-blue.svg)    
+![built with R](https://img.shields.io/badge/built%20with-R-blue.svg)    
 
 # Human-Activity-Recognition-Analysis
 
