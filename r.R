@@ -108,6 +108,7 @@ gbmAccuracyTest <- confusionMatrix(gbmPredTest, myTesting$classe)
 gbmAccuracyTest
 
 plot(gbmFit1, ylim=c(0.9, 1))
+# The model gave an accuracy of testing dataset of 99.89%, which was more accurate than that of from the Decision Trees or GBM. The expected out-of-sample error is 0.11% (1-99.89%).
 
 # Predicting Results on the Test Data
 predictionB2 <- predict(modFitB1, testing, type = "class")
