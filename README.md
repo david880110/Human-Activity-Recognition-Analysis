@@ -15,8 +15,7 @@ One thing that people regularly do is quantify how much of a particular activity
 
 <img src="https://raw.githubusercontent.com/david880110/Human-Activity-Recognition-Analysis/master/image/wayback-machine-logo.jpg" width="240" height="80"/>
 
-The [data](http://web.archive.org/web/20161224072740/http:/groupware.les.inf.puc-rio.br/har.) for this project come from "http://web.archive.org" If you use the document you create for this class for any purpose please cite them as they have been very generous in allowing their data to be used for this kind of assignment.
-
+The [data](http://web.archive.org/web/20161224072740/http:/groupware.les.inf.puc-rio.br/har.) for this project come from "http://web.archive.org"， licensed under the Creative Commons license (CC BY-SA).
 ## Findings 
 
 ## Project Detail

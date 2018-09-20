@@ -2,59 +2,114 @@
 library(caret)
 library(rpart)
 library(rpart.plot)
+library(RColorBrewer)
+library(rattle)
 library(randomForest)
-library(corrplot)
-
-# Set working directory
-setwd("C:/Users/david.LIZZY/Documents/GitHub/Human-Activity-Recognition-Analysis")
+library(knitr)
 
 # Load csv
-trainRaw <- read.csv("raw_data/pml-training.csv")
-testRaw <- read.csv("raw_data/pml-training.csv")
-dim(trainRaw)
-dim(testRaw)
+set.seed(12345)
 
-# Drop NA
-trainRaw <- trainRaw[, colSums(is.na(trainRaw)) == 0] 
-testRaw <- testRaw[, colSums(is.na(testRaw)) == 0]
+trainUrl <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
+testUrl <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
+training <- read.csv(url(trainUrl), na.strings=c("NA","#DIV/0!",""))
+testing <- read.csv(url(testUrl), na.strings=c("NA","#DIV/0!",""))
 
-# Clean data
-classe <- trainRaw$classe
-trainRemove <- grepl("^X|timestamp|window", names(trainRaw))
-trainRaw <- trainRaw[, !trainRemove]
-trainCleaned <- trainRaw[, sapply(trainRaw, is.numeric)]
-trainCleaned$classe <- classe
-testRemove <- grepl("^X|timestamp|window", names(testRaw))
-testRaw <- testRaw[, !testRemove]
-testCleaned <- testRaw[, sapply(testRaw, is.numeric)]
+# Partion the training set into two
+inTrain <- createDataPartition(training$classe, p=0.6, list=FALSE)
+myTraining <- training[inTrain, ]
+myTesting <- training[-inTrain, ]
+dim(myTraining); dim(myTesting)
 
-# Slice data
-set.seed(22519) # For reproducibile purpose
-inTrain <- createDataPartition(trainCleaned$classe, p=0.70, list=F)
-trainData <- trainCleaned[inTrain, ]
-testData <- trainCleaned[-inTrain, ]
+# Remove NearZeroVariance variables
+nzv <- nearZeroVar(myTraining, saveMetrics=TRUE)
+myTraining <- myTraining[,nzv$nzv==FALSE]
 
-# Modeling
-controlRf <- trainControl(method="cv", 5)
-modelRf <- train(classe ~ ., data=trainData, method="rf", trControl=controlRf, ntree=250)
-modelRf
+nzv<- nearZeroVar(myTesting,saveMetrics=TRUE)
+myTesting <- myTesting[,nzv$nzv==FALSE]
 
-predictRf <- predict(modelRf, testData)
-confusionMatrix(testData$classe, predictRf)
+# Remove the first column of the myTraining data set
+myTraining <- myTraining[c(-1)]
 
-accuracy <- postResample(predictRf, testData$classe)
-accuracy
-oose <- 1 - as.numeric(confusionMatrix(testData$classe, predictRf)$overall[1])
-oose
+# Clean variables with more than 60% NA
+trainingV3 <- myTraining
+for(i in 1:length(myTraining)) {
+  if( sum( is.na( myTraining[, i] ) ) /nrow(myTraining) >= .7) {
+    for(j in 1:length(trainingV3)) {
+      if( length( grep(names(myTraining[i]), names(trainingV3)[j]) ) == 1)  {
+        trainingV3 <- trainingV3[ , -j]
+      }   
+    } 
+  }
+}
 
-# Predicting
-result <- predict(modelRf, testCleaned[, -length(names(testCleaned))])
-result
+# Set back to the original variable name
+myTraining <- trainingV3
+rm(trainingV3)
 
-# Correlation Matrix Visualization
-corrPlot <- cor(trainData[, -length(names(trainData))])
-corrplot(corrPlot, method="color")
-         
-# Decision Tree Visualization
-treeModel <- rpart(classe ~ ., data=trainData, method="class")
-prp(treeModel) # fast plot
+# Transform the myTesting and testing data sets
+clean1 <- colnames(myTraining)
+clean2 <- colnames(myTraining[, -58])  # remove the classe column
+myTesting <- myTesting[clean1]         # allow only variables in myTesting that are also in myTraining
+testing <- testing[clean2]             # allow only variables in testing that are also in myTraining
+
+dim(myTesting)
+
+# Coerce the data into the same type
+for (i in 1:length(testing) ) {
+  for(j in 1:length(myTraining)) {
+    if( length( grep(names(myTraining[i]), names(testing)[j]) ) == 1)  {
+      class(testing[j]) <- class(myTraining[i])
+    }      
+  }      
+}
+
+# To get the same class between testing and myTraining
+testing <- rbind(myTraining[2, -58] , testing)
+testing <- testing[-1,]
+
+# Prediction with Decision Trees
+set.seed(12345)
+modFitA1 <- rpart(classe ~ ., data=myTraining, method="class")
+fancyRpartPlot(modFitA1)
+predictionsA1 <- predict(modFitA1, myTesting, type = "class")
+cmtree <- confusionMatrix(predictionsA1, myTesting$classe)
+cmtree
+
+# Decision Tree Confusion Matrix
+plot(cmtree$table, col = cmtree$byClass, main = paste("Decision Tree Confusion Matrix: Accuracy =", round(cmtree$overall['Accuracy'], 4)))
+
+# Prediction with Random Forests
+set.seed(12345)
+modFitB1 <- randomForest(classe ~ ., data=myTraining)
+predictionB1 <- predict(modFitB1, myTesting, type = "class")
+cmrf <- confusionMatrix(predictionB1, myTesting$classe)
+cmrf
+plot(modFitB1)
+
+# Random Forest Confusion Matrix
+plot(cmrf$table, col = cmtree$byClass, main = paste("Random Forest Confusion Matrix: Accuracy =", round(cmrf$overall['Accuracy'], 4)))
+
+# Prediction with Generalized Boosted Regression
+set.seed(12345)
+fitControl <- trainControl(method = "repeatedcv",
+                           number = 5,
+                           repeats = 1)
+
+gbmFit1 <- train(classe ~ ., data=myTraining, method = "gbm",
+                 trControl = fitControl,
+                 verbose = FALSE)
+
+
+gbmFinMod1 <- gbmFit1$finalModel
+
+gbmPredTest <- predict(gbmFit1, newdata=myTesting)
+gbmAccuracyTest <- confusionMatrix(gbmPredTest, myTesting$classe)
+gbmAccuracyTest
+
+plot(gbmFit1, ylim=c(0.9, 1))
+
+# Predicting Results on the Test Data
+predictionB2 <- predict(modFitB1, testing, type = "class")
+predictionB2
+
